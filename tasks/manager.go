@@ -2,6 +2,8 @@ package tasks
 
 import (
 	"todo/storage"
+	"encoding/json"
+	"fmt"
 )
 
 type Manager struct {
@@ -31,4 +33,14 @@ func (m *Manager) AddTask(title string) error {
 	}
 
 	m.tasks = append(m.tasks, *newTask)
+
+	data, err := json.MarshalIndent(m.tasks, "", "	")
+	if err != nil {
+		return fmt.Errorf("Failed to serialize tasks: %w", err)
+	}
+	err = storage.SaveTasks(data)
+	if err != nil {
+		return fmt.Errorf("Failed to save tasks: %w", err)
+	}
+	return nil
 }
