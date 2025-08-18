@@ -18,6 +18,8 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
+		case "list":
+			m.ListTasks()
 		}
 
 	}
