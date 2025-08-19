@@ -67,3 +67,21 @@ func (m *Manager) ListTasks() {
 		fmt.Printf("ID: %v | Title: %v | Done: %v\n", t.ID, t.Title, t.Done)
 	}
 }
+
+func (m *Manager) MarkDone(taskID int) error {
+	found := false
+	for i := range m.tasks {
+		if m.tasks[i].ID == taskID && !m.tasks[i].Done {
+			m.tasks[i].Done = true
+			fmt.Printf("Task \"%s\" marked as done.\n", m.tasks[i].Title)
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("Task with ID %d do not found or already done", taskID)
+	}
+
+	return m.save()
+}

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"todo/tasks"
 )
 
@@ -20,6 +21,17 @@ func main() {
 			}
 		case "list":
 			m.ListTasks()
+		case "done":
+			taskID, err := strconv.Atoi(os.Args[2])
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			err = m.MarkDone(taskID)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
 
 	}
