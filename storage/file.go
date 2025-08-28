@@ -19,18 +19,35 @@ func createDir() (string, error) {
 	return todoPath, nil
 }
 
+func getFilePath() (string, error) {
+	dir, err := createDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "tasks.json"), nil
+}
+
 func SaveTasks(data []byte) error {
-	file, err := os.Create("tasks.json")
+	filepath, err := getFilePath()
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Create(filepath)
 	if err != nil {
 		return fmt.Errorf("Failed to create json file: %w", err)
 	}
 	defer file.Close()
 
-	return os.WriteFile("tasks.json", data, 0644)
+	return os.WriteFile(filepath, data, 0644)
 }
 
 func LoadTasks() (string, error) {
-	data, err := os.ReadFile("tasks.json")
+	filepath, err := getFilePath()
+	if err != nil {
+		return "", err
+	}
+	data, err := os.ReadFile(filepath)
 	if err != nil {
 		return "", fmt.Errorf("Failed to read file: %w", err)
 	}
