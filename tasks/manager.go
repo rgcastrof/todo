@@ -9,10 +9,15 @@ import (
 
 type Manager struct {
 	tasks map[int]*Task
+	queue *Queue
 }
 
 func NewManager() *Manager {
-	m := &Manager{ tasks: make(map[int]*Task) }
+	m := &Manager{ 
+		tasks: make(map[int]*Task),
+		queue: &Queue{},
+	}
+
 	data, err := storage.LoadTasks()
 	if err != nil {
 		return m
@@ -44,11 +49,16 @@ func (m *Manager) save() error {
 }
 
 func (m *Manager) AddTask(title string) error {
-
 	newTask := &Task{
-		ID: m.nextID(),
 		Title: title,
 		Done: false,
+	}
+	if !m.queue.IsEmpty() {
+		if id, ok := m.queue.Dequeue(); ok {
+			newTask.ID = id
+		}
+	} else {
+		newTask.ID = m.nextID()
 	}
 
 	m.tasks[newTask.ID] = newTask
@@ -85,6 +95,7 @@ func (m *Manager) RmTask(taskID int) error {
 		return fmt.Errorf("No tasks found")
 	}
 	if task, ok := m.tasks[taskID]; ok {
+		m.queue.Enqueue(task.ID)
 		fmt.Printf("Task \"%s\" successfully deleted\n", task.Title)
 		delete(m.tasks, taskID)
 		return m.save()
