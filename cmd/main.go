@@ -7,9 +7,26 @@ import (
 	"todo/tasks"
 )
 
+const (
+	version = "0.1.0"
+)
+
+func printHelp() {
+	fmt.Printf(
+		`usage: %s [<args>]
+
+	add  <task description>		- Add a new task
+	list				- List all the tasks
+	done <id>			- Mark the task as completed
+	rm   <id>			- Remove a task
+	version				- Shows the program version
+	help				- Shows this help message
+`, os.Args[0])
+}
+
 func main() {
-	if len(os.Args) == 1 {
-		fmt.Println(os.Args[0])
+	if len(os.Args) < 2 {
+		printHelp()
 	} else {
 		m := tasks.NewManager()
 		cmd := os.Args[1]
@@ -46,6 +63,4 @@ func main() {
 		}
 
 	}
-
 }
-
