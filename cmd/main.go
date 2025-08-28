@@ -32,6 +32,17 @@ func main() {
 				fmt.Println(err)
 				return
 			}
+		case "delete":
+			taskID, err := strconv.Atoi(os.Args[2])
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			err = m.DelTask(taskID)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
 
 	}

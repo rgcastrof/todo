@@ -54,7 +54,6 @@ func (m *Manager) AddTask(title string) error {
 	return m.save()
 }
 
-
 func (m *Manager) ListTasks() {
 	if len(m.tasks) == 0 {
 		fmt.Println("No tasks found")
@@ -83,4 +82,17 @@ func (m *Manager) MarkDone(taskID int) error {
 	}
 
 	return m.save()
+}
+
+func (m *Manager) DelTask(taskID int)  error {
+	if len(m.tasks) == 0 {
+		return fmt.Errorf("No tasks found")
+	}
+	for i := range m.tasks {
+		if m.tasks[i].ID == taskID {
+			m.tasks = append(m.tasks[:i], m.tasks[i+1:]...)
+			return m.save()
+		}
+	}
+	return fmt.Errorf("Task with ID %d do not found", taskID)
 }
