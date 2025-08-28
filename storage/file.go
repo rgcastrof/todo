@@ -33,13 +33,12 @@ func SaveTasks(data []byte) error {
 		return err
 	}
 
-	file, err := os.Create(filepath)
+	err = os.WriteFile(filepath, data, 0644)
 	if err != nil {
-		return fmt.Errorf("Failed to create json file: %w", err)
+		return fmt.Errorf("Failed to write to json file: %w", err)
 	}
-	defer file.Close()
 
-	return os.WriteFile(filepath, data, 0644)
+	return nil
 }
 
 func LoadTasks() (string, error) {
