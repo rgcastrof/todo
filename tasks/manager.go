@@ -7,11 +7,11 @@ import (
 )
 
 type Manager struct {
-	tasks []Task
+	tasks map[int]*Task
 }
 
 func NewManager() *Manager {
-	m := &Manager{ tasks: []Task{} }
+	m := &Manager{ tasks: make(map[int]*Task) }
 	data, err := storage.LoadTasks()
 	if err != nil {
 		return m
@@ -50,7 +50,7 @@ func (m *Manager) AddTask(title string) error {
 		Done: false,
 	}
 
-	m.tasks = append(m.tasks, *newTask)
+	m.tasks[newTask.ID] = newTask
 	return m.save()
 }
 
@@ -67,34 +67,21 @@ func (m *Manager) ListTasks() {
 }
 
 func (m *Manager) MarkDone(taskID int) error {
-	found := false
-	for i := range m.tasks {
-		if m.tasks[i].ID == taskID && !m.tasks[i].Done {
-			m.tasks[i].Done = true
-			fmt.Printf("Task \"%s\" marked as done.\n", m.tasks[i].Title)
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		return fmt.Errorf("Task with ID %d do not found or already done", taskID)
-	}
-
-	return m.save()
+	if task, ok := m.tasks[taskID]; !task.Done && ok {
+		task.Done = true
+		return m.save()
+	} 
+	return fmt.Errorf("Task with ID %d do not found or already done", taskID)
 }
 
 func (m *Manager) RmTask(taskID int) error {
 	if len(m.tasks) == 0 {
 		return fmt.Errorf("No tasks found")
 	}
-	for i := range m.tasks {
-		if m.tasks[i].ID == taskID {
-			taskTitle := m.tasks[i].Title
-			m.tasks = append(m.tasks[:i], m.tasks[i+1:]...)
-			fmt.Printf("Task \"%s\" successfully deleted\n", taskTitle)
-			return m.save()
-		}
+	if task, ok := m.tasks[taskID]; ok {
+		fmt.Printf("Task \"%s\" successfully deleted\n", task.Title)
+		delete(m.tasks, taskID)
+		return m.save()
 	}
 	return fmt.Errorf("Task with ID %d not found", taskID)
 }
