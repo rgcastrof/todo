@@ -84,15 +84,17 @@ func (m *Manager) MarkDone(taskID int) error {
 	return m.save()
 }
 
-func (m *Manager) DelTask(taskID int)  error {
+func (m *Manager) DelTask(taskID int) error {
 	if len(m.tasks) == 0 {
 		return fmt.Errorf("No tasks found")
 	}
 	for i := range m.tasks {
 		if m.tasks[i].ID == taskID {
+			taskTitle := m.tasks[i].Title
 			m.tasks = append(m.tasks[:i], m.tasks[i+1:]...)
+			fmt.Printf("Task \"%s\" successfully deleted\n", taskTitle)
 			return m.save()
 		}
 	}
-	return fmt.Errorf("Task with ID %d do not found", taskID)
+	return fmt.Errorf("Task with ID %d not found", taskID)
 }
