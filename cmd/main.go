@@ -45,13 +45,13 @@ func handleArgs(m *tasks.Manager) {
 			fmt.Println(err)
 			return
 		}
-	case "del":
+	case "rm":
 		taskID, err := strconv.Atoi(os.Args[2])
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		err = m.DelTask(taskID)
+		err = m.RmTask(taskID)
 		if err != nil {
 			fmt.Println(err)
 			return

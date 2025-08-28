@@ -84,7 +84,7 @@ func (m *Manager) MarkDone(taskID int) error {
 	return m.save()
 }
 
-func (m *Manager) DelTask(taskID int) error {
+func (m *Manager) RmTask(taskID int) error {
 	if len(m.tasks) == 0 {
 		return fmt.Errorf("No tasks found")
 	}
