@@ -1,9 +1,10 @@
 package tasks
 
 import (
-	"todo/storage"
 	"encoding/json"
 	"fmt"
+	"sort"
+	"todo/storage"
 )
 
 type Manager struct {
@@ -60,9 +61,14 @@ func (m *Manager) ListTasks() {
 		return
 	}
 
-	fmt.Println("Task List:")
-	for _, t := range m.tasks {
-		fmt.Printf("ID: %v | Title: %v | Done: %v\n", t.ID, t.Title, t.Done)
+	var keys []int
+	for id := range m.tasks {
+		keys = append(keys, id)
+	}
+	sort.Ints(keys)
+	for _, id := range keys {
+		task := m.tasks[id]
+		fmt.Printf("ID: %v | Title: %v | Done: %v\n", task.ID, task.Title, task.Done)
 	}
 }
 
