@@ -12,6 +12,11 @@ type Manager struct {
 	queue *Queue
 }
 
+type PersistedData struct {
+	Tasks map[int]*Task `json:"tasks"`
+	FreeIDs []int 		`json:"freeIDs"`
+}
+
 func NewManager() *Manager {
 	m := &Manager{ 
 		tasks: make(map[int]*Task),
@@ -22,11 +27,14 @@ func NewManager() *Manager {
 	if err != nil {
 		return m
 	}
-	err = json.Unmarshal([]byte(data), &m.tasks)
+	var persisted PersistedData
+	err = json.Unmarshal([]byte(data), &persisted)
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
+	m.tasks = persisted.Tasks
+	m.queue.items = persisted.FreeIDs
 	return m
 }
 
@@ -41,7 +49,11 @@ func (m *Manager) nextID() int {
 }
 
 func (m *Manager) save() error {
-	data, err := json.MarshalIndent(m.tasks, "", "	")
+	persisted := PersistedData {
+		Tasks: m.tasks,
+		FreeIDs: m.queue.items,
+	}
+	data, err := json.MarshalIndent(persisted, "", "	")
 	if err != nil {
 		return fmt.Errorf("Failed to serialize tasks: %w", err)
 	}
