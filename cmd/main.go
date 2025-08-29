@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	version = "0.2.2"
+	version = "0.2.4"
 )
 
 func printHelp() {
@@ -28,33 +28,39 @@ func handleArgs(m *tasks.Manager) {
 	cmd := os.Args[1]
 	switch cmd {
 	case "add":
-		err := m.AddTask(os.Args[2])
-		if err != nil {
-			fmt.Println(err)
+		for i := 2; i < len(os.Args); i++ {
+			err := m.AddTask(os.Args[i])
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	case "list":
 		m.ListTasks()
 	case "done":
-		taskID, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		err = m.MarkDone(taskID)
-		if err != nil {
-			fmt.Println(err)
-			return
+		for i := 2; i < len(os.Args); i++ {
+			taskID, err := strconv.Atoi(os.Args[i])
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			err = m.MarkDone(taskID)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
 	case "rm":
-		taskID, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		err = m.RmTask(taskID)
-		if err != nil {
-			fmt.Println(err)
-			return
+		for i := 2; i < len(os.Args); i++ {
+			taskID, err := strconv.Atoi(os.Args[i])
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			err = m.RmTask(taskID)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
 	case "version":
 		fmt.Printf("%s version: %s\n", os.Args[0], version)
